@@ -1,7 +1,8 @@
-﻿using Enchere.Models;
+﻿using AuctionServices.Data;
+using AuctionServices.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Enchere.Data
+namespace AuctionServices.Data
 {
     public class AuctionDbContext : DbContext
     {
@@ -9,7 +10,7 @@ namespace Enchere.Data
         {
         }
         public DbSet<Auction> Auctions { get; set; }
-        DbSet<Item> Items { get; set; }
+        public DbSet<Item> Items { get; set; }
 
 
     }

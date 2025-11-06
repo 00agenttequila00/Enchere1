@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AuctionServices.Migrations
 {
     /// <inheritdoc />
-    public partial class New : Migration
+    public partial class first : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,7 @@ namespace AuctionServices.Migrations
                 name: "Auctions",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ReservePrice = table.Column<int>(type: "integer", nullable: false),
                     Seller = table.Column<string>(type: "text", nullable: false),
                     Winner = table.Column<string>(type: "text", nullable: false),
@@ -28,7 +28,7 @@ namespace AuctionServices.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Auctions", x => x.ID);
+                    table.PrimaryKey("PK_Auctions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -41,7 +41,8 @@ namespace AuctionServices.Migrations
                     Year = table.Column<int>(type: "integer", nullable: false),
                     Color = table.Column<string>(type: "text", nullable: false),
                     ImageUrl = table.Column<string>(type: "text", nullable: false),
-                    AuctionId = table.Column<Guid>(type: "uuid", nullable: false)
+                    AuctionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Mileage = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -50,14 +51,15 @@ namespace AuctionServices.Migrations
                         name: "FK_Items_Auctions_AuctionId",
                         column: x => x.AuctionId,
                         principalTable: "Auctions",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Items_AuctionId",
                 table: "Items",
-                column: "AuctionId");
+                column: "AuctionId",
+                unique: true);
         }
 
         /// <inheritdoc />

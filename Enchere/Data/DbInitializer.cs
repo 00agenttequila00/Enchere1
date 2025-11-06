@@ -1,5 +1,5 @@
 ﻿using AuctionServices.Data;
-using Enchere.Data;
+using AuctionServices.Models;
 using Enchere.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +16,8 @@ namespace AuctionServices.Data
         private static void SeedData(AuctionDbContext context)
         {
             context.Database.Migrate();
+
+            
             if (context.Auctions.Any())
             {
                 Console.WriteLine("Already data exist");
