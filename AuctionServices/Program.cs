@@ -29,18 +29,37 @@ builder.Services.AddAutoMapper(cfg => {
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
-
-
-app.UseAuthorization();
-
-app.MapControllers();
 try
 {
-    DbInitializer.InitDb(app);
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetService<AuctionDbContext>();
+    
+    if (context == null)
+    {
+        throw new Exception("Cannot get DbContext from service provider");
+    }
+
+    Console.WriteLine("Starting database initialization...");
+    await context.Database.MigrateAsync();
+    
+    if (!context.Auctions.Any())
+    {
+        Console.WriteLine("No data exists - seeding database...");
+        DbInitializer.InitDb(app);
+        Console.WriteLine("Seeding complete!");
+    }
+    else
+    {
+        Console.WriteLine("Database already contains data - skipping seeding");
+    }
 }
-catch (Exception e)
+catch (Exception ex)
 {
-    Console.WriteLine(e);
+    Console.WriteLine($"An error occurred while initializing the database: {ex.Message}");
+    Console.WriteLine(ex.StackTrace);
 }
+
+app.UseAuthorization();
+app.MapControllers();
+
 app.Run();

@@ -1,12 +1,13 @@
-Services:
+services:
   postgres:
-  image: postgres
-  environment:
-    -POSTGRES_PASSWORD=passwrod-1
-  ports:
-    -5432:5432
-  volumes:
-    -pgdata:/var/lib/postgresql/data
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: "password-1"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
 volumes:
   pgdata:
 
