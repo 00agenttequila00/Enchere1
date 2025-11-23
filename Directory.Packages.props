@@ -1,0 +1,9 @@
+<Project>
+  <ItemGroup>
+    <!-- Central package versions to keep collaborators in sync -->
+    <!-- Upgrading to EF Core 9.x and matching Npgsql provider to support net9.0 across machines -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+  </ItemGroup>
+</Project>

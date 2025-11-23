@@ -361,3 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Migrations - keep locally but don't push
+**/Migrations/
+Migrations_backup_*/
+
+# SearchService project file changes
+SearchService/SearchService.csproj
