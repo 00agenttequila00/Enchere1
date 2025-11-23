@@ -15,7 +15,11 @@ namespace SearchService.Controllers
         {
             var query = DB.PagedSearch<Item, Item>();
             
-            //if (!string.IsNullOrWhiteSpace(searchParams.SearchTerm)) query.Match(Search.Full, searchParams.SearchTerm).SortByTextScore();
+            if (!string.IsNullOrWhiteSpace(searchParams.SearchTerm))
+            {
+                query.Match(Search.Full, searchParams.SearchTerm).SortByTextScore();
+            }
+            
             query = searchParams.OrderBy switch
             {
                 "make" => query.Sort(x => x.Ascending(a => a.Make)),
@@ -26,7 +30,8 @@ namespace SearchService.Controllers
             {
                 "finished" => query.Match(x => x.AuctionEnd < DateTime.UtcNow),
                 "endingSoon" => query.Match(x => x.AuctionEnd < DateTime.UtcNow.AddHours(6) && x.AuctionEnd>DateTime.UtcNow),
-                _=> query.Match(x => x.AuctionEnd > DateTime.UtcNow)
+                "live" => query.Match(x => x.AuctionEnd > DateTime.UtcNow),
+                _ => query // No filter by default - show all auctions
             };
             if (!string.IsNullOrWhiteSpace(searchParams.Seller))query.Match(x=> x.Seller ==searchParams.Seller);
             if (!string.IsNullOrWhiteSpace(searchParams.Winner)) query.Match(x => x.Winner == searchParams.Winner);

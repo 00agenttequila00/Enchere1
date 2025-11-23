@@ -55,7 +55,11 @@ namespace AuctionServices.Controllers
             var auction = _mapper.Map<Auction>(auctiondto);
             _context.Auctions.Add(auction);
             var newAuction = _mapper.Map<AuctionDTO>(auction);
-            await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
+            
+            var createEvent = _mapper.Map<AuctionCreated>(newAuction);
+            Console.WriteLine($"Publishing AuctionCreated event for auction {createEvent.Id} with model: {createEvent.Model}");
+            await _publishEndpoint.Publish(createEvent);
+            
             var result = await _context.SaveChangesAsync() > 0;
             
             if (!result)
@@ -78,7 +82,10 @@ namespace AuctionServices.Controllers
             auction.Item.Color = updateAuctionDto.Color ?? auction.Item.Color;
             auction.Item.Year = updateAuctionDto.Year ?? auction.Item.Year;
             
-            await _publishEndpoint.Publish(_mapper.Map<AuctionUpdated>(auction));
+            var updateEvent = _mapper.Map<AuctionUpdated>(auction);
+            Console.WriteLine($"Publishing update event for auction {updateEvent.Id} with model: {updateEvent.Model}");
+            await _publishEndpoint.Publish(updateEvent);
+            
             var result = await _context.SaveChangesAsync() > 0;
             if (result)return Ok();
             

@@ -16,9 +16,16 @@ namespace SearchService.Consumer
         }
         public async Task Consume(ConsumeContext<AuctionCreated> context)
         {
-            Console.WriteLine("Consuming" + context.Message.Id);
+            Console.WriteLine($"----> Consuming AuctionCreated for auction: {context.Message.Id}");
+            Console.WriteLine($"----> Model: {context.Message.Model}, Make: {context.Message.Make}");
+            
             var item = _mapper.Map<Models.Item>(context.Message);
+            
+            Console.WriteLine($"----> Mapped Item ID: {item.ID}");
+            
             await item.SaveAsync();
+            
+            Console.WriteLine($"----> Successfully saved item to MongoDB with ID: {item.ID}");
         }
     }
 }
