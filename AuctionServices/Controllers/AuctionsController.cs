@@ -88,18 +88,24 @@ namespace AuctionServices.Controllers
         public async Task<ActionResult> DeleteAuction(Guid id)
         {
             var auction = await _context.Auctions.FindAsync(id);
-            var newauction = _mapper.Map<AuctionDTO>(auction);
-            await _publishEndpoint.Publish(_mapper.Map<AuctionDeleted>(newauction));
+            
+            // Check for null FIRST
             if (auction == null)
             {
                 return NotFound();
             }
+            
+            // Now safe to use auction properties
+            await _publishEndpoint.Publish<AuctionDeleted>(new { Id = id });
+            
             _context.Auctions.Remove(auction);
-            var result = await _context.SaveChangesAsync()>0;
+            var result = await _context.SaveChangesAsync() > 0;
+            
             if (result)
             {
                 return Ok();
             }
+            
             return BadRequest("Couldn't update DB");
 
 
