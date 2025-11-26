@@ -5,6 +5,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Contracts;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,10 +50,12 @@ namespace AuctionServices.Controllers
             }
             return _mapper.Map<AuctionDTO>(auction);
         }
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<AuctionDTO>> CreateAuction(CreateAuctionDTO auctiondto)
         {
             var auction = _mapper.Map<Auction>(auctiondto);
+            auction.Seller = User.Identity.Name;
             _context.Auctions.Add(auction);
             var newAuction = _mapper.Map<AuctionDTO>(auction);
             
@@ -68,6 +71,7 @@ namespace AuctionServices.Controllers
             }
             return CreatedAtAction(nameof(GetAuctionById), new { auction.Id },newAuction);
         }
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAuction(Guid Id, UpdateAuctionDto updateAuctionDto)
         {
@@ -75,6 +79,10 @@ namespace AuctionServices.Controllers
             if (auction == null)
             {
                 return NotFound();
+            }
+            if(auction.Seller != User.Identity.Name)
+            {
+                return Forbid();//Badrequest()
             }
             auction.Item.Make = updateAuctionDto.Make ?? auction.Item.Make;
             auction.Item.Model = updateAuctionDto.Model ?? auction.Item.Model;
@@ -101,7 +109,11 @@ namespace AuctionServices.Controllers
             {
                 return NotFound();
             }
-            
+            if(auction.Seller != User.Identity.Name)
+            {
+                return Forbid();
+            }
+
             // Now safe to use auction properties
             await _publishEndpoint.Publish<AuctionDeleted>(new { Id = id });
             
@@ -110,7 +122,7 @@ namespace AuctionServices.Controllers
             
             if (result)
             {
-                return Ok();
+                return Ok();  // ← Returns 200 OK with NO BODY
             }
             
             return BadRequest("Couldn't update DB");
